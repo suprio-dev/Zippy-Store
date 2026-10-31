@@ -8,23 +8,33 @@ const searchInput = document.querySelector("#search-input");
 
 async function fetchProducts(url) {
   
-  productsContainer.innerHTML = "Loading...";
+  productsContainer.innerHTML = `<div class="col-span-full flex justify-center items-center py-16">
+  <p class="text-lg font-semibold text-teal-700 animate-pulse">
+    Loading...
+  </p>
+</div>`;
   try {
     const response = await fetch(url);
     const data = await response.json();
     if(data.products.length){
 renderProducts(data.products);
     }else{
-      productsContainer.innerHTML=`No items found...`;
+      productsContainer.innerHTML=`<div class="col-span-full flex justify-center items-center py-16">
+  <p class="text-lg font-semibold text-teal-700 animate-pulse">
+    No items found...
+  </p>
+</div>`;
     }
     
   } catch (error) {
-
+console.log("Unable to fetch products!");
   }
 }
 
 
-
+function convertToINR(price){
+return Math.round(price * 40).toLocaleString("en-IN");
+}
 
 
 function renderProducts(products) {
@@ -49,7 +59,7 @@ function renderProducts(products) {
             </h2>
             <div class="mt-auto pt-2">
               <span class="text-lg font-bold text-slate-900">
-                ₹${Math.round(price * 40).toLocaleString("en-IN")}
+                ₹${convertToINR(price)}
               </span>
             </div>
             <a href="product-details.html?id=${id}"
@@ -83,40 +93,36 @@ fetchCategories();
 
 init();
 
+
+let categoryData = [];
 async function fetchCategories() {
   try {
     const response = await fetch(CATEGORY_API);
     const data = await response.json();
-    renderCategories(data);
-  } catch (error) {
+    categoryData=[{ name: "all", slug: "all", url: API }, ...data];
+        renderCategories();
 
+  } catch (error) {
+console.log("Unable to fetch categories!");
   }
 }
-
-let categoryButtons = [];
-
-function renderCategories(categories) {
+function renderCategories(currentSlug="all") {
   categoryFilters.innerHTML = "";
-  [{ name: "all", slug: "all", url: API }, ...categories].forEach(({ name, slug, url }) => {
+  [...categoryData].forEach(({ name, slug, url }) => {
 
     let button = document.createElement("button");
-    if (name === "all") {
+    if (currentSlug === slug) {
       button.className = "px-4 py-1.5 rounded-md text-sm font-medium bg-teal-700 text-white transition capitalize";
     } else {
       button.className = "px-4 py-1.5 rounded-md text-sm font-medium bg-white text-slate-700 border capitalize border-slate-300 hover:bg-slate-100 transition";
 
     }
-
     button.type = "button";
     button.textContent = name;
     button.dataset.category = slug;
     button.dataset.url = url;
-
-    categoryFilters.append(button);
-
-    categoryButtons.push(button);
-
-  })
+  categoryFilters.append(button);
+})
 }
 
 
@@ -132,10 +138,10 @@ categoryFilters.addEventListener('click', (e) => {
   const element = e.target;
 
   if (element.type) {
-    const text = element.dataset.category;
+    const slug = element.dataset.category;
     const url = element.dataset.url;
-    console.log(text, url);
-    filterManage(element);
+    console.log(slug, url);
+    renderCategories(slug);
     fetchProducts(url);
   }
 
@@ -145,16 +151,7 @@ categoryFilters.addEventListener('click', (e) => {
 
 
 
-function filterManage(element) {
-  categoryButtons.forEach((value) => {
-    if (value !== element) {
-      value.className = "px-4 py-1.5 rounded-md text-sm font-medium bg-white text-slate-700 border capitalize border-slate-300 hover:bg-slate-100 transition";
-    } else {
-      value.className = "px-4 py-1.5 rounded-md text-sm font-medium bg-teal-700 text-white transition capitalize";
-    }
-  })
 
-}
 
 
 if(searchInput){
@@ -180,7 +177,11 @@ const id = params.get("id");
 const url=`https://dummyjson.com/products/${id}`;
 // console.log(id);
 
-productDetailtContainer.innerHTML=`Loading...`;
+productDetailtContainer.innerHTML=`<div class="col-span-full flex justify-center items-center py-16">
+  <p class="text-lg font-semibold text-teal-700 animate-pulse">
+    Loading...
+  </p>
+</div>`;
 const response=await fetch(url);
 const data=await response.json();
 console.log(data);
@@ -232,7 +233,7 @@ const div=`<div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
 
           <div class="mb-6">
             <span class="text-2xl sm:text-3xl font-bold text-slate-900">
-              ₹${Math.round(price * 40).toLocaleString("en-IN")}
+              ₹${convertToINR(price)}
             </span>
           </div>
 
