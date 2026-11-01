@@ -4,10 +4,12 @@ const CATEGORY_API = "https://dummyjson.com/products/categories";
 const productsContainer = document.querySelector("#products-container");
 const categoryFilters = document.querySelector("#category-filters");
 const searchInput = document.querySelector("#search-input");
+const wishlistCount = document.querySelector("#wishlist-count");
+const cartCount = document.querySelector("#cart-count");
 
 
 async function fetchProducts(url) {
-  
+
   productsContainer.innerHTML = `<div class="col-span-full flex justify-center items-center py-16">
   <p class="text-lg font-semibold text-teal-700 animate-pulse">
     Loading...
@@ -16,24 +18,24 @@ async function fetchProducts(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    if(data.products.length){
-renderProducts(data.products);
-    }else{
-      productsContainer.innerHTML=`<div class="col-span-full flex justify-center items-center py-16">
+    if (data.products.length) {
+      renderProducts(data.products);
+    } else {
+      productsContainer.innerHTML = `<div class="col-span-full flex justify-center items-center py-16">
   <p class="text-lg font-semibold text-teal-700 animate-pulse">
     No items found...
   </p>
 </div>`;
     }
-    
+
   } catch (error) {
-console.log("Unable to fetch products!");
+    console.log("Unable to fetch products!");
   }
 }
 
 
-function convertToINR(price){
-return Math.round(price * 40).toLocaleString("en-IN");
+function convertToINR(price) {
+  return Math.round(price * 60).toLocaleString("en-IN");
 }
 
 
@@ -84,29 +86,43 @@ function renderProducts(products) {
 
 
 function init() {
-if(productsContainer){
+  if (productsContainer) {
 
-  fetchProducts(API);
-fetchCategories();
-}
+    fetchProducts(API);
+    fetchCategories();
+  }
 }
 
 init();
 
 
 let categoryData = [];
+
+
+function getItem(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+
+function setItem(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+
+
+
 async function fetchCategories() {
   try {
     const response = await fetch(CATEGORY_API);
     const data = await response.json();
-    categoryData=[{ name: "all", slug: "all", url: API }, ...data];
-        renderCategories();
+    categoryData = [{ name: "all", slug: "all", url: API }, ...data];
+    renderCategories();
 
   } catch (error) {
-console.log("Unable to fetch categories!");
+    console.log("Unable to fetch categories!");
   }
 }
-function renderCategories(currentSlug="all") {
+function renderCategories(currentSlug = "all") {
   categoryFilters.innerHTML = "";
   [...categoryData].forEach(({ name, slug, url }) => {
 
@@ -121,8 +137,8 @@ function renderCategories(currentSlug="all") {
     button.textContent = name;
     button.dataset.category = slug;
     button.dataset.url = url;
-  categoryFilters.append(button);
-})
+    categoryFilters.append(button);
+  })
 }
 
 
@@ -131,63 +147,71 @@ function formatCategory(category) {
   return category.replace("-", " ");
 }
 
-if(categoryFilters){
-categoryFilters.addEventListener('click', (e) => {
-  e.stopPropagation();
+if (categoryFilters) {
+  categoryFilters.addEventListener('click', (e) => {
+    e.stopPropagation();
 
-  const element = e.target;
+    const element = e.target;
 
-  if (element.type) {
-    const slug = element.dataset.category;
-    const url = element.dataset.url;
-    console.log(slug, url);
-    renderCategories(slug);
-    fetchProducts(url);
+    if (element.type) {
+      const slug = element.dataset.category;
+      const url = element.dataset.url;
+      console.log(slug, url);
+      renderCategories(slug);
+      fetchProducts(url);
+    }
+
+  })
+}
+
+
+
+
+
+
+
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    e.stopPropagation();
+
+    fetchProducts(`https://dummyjson.com/products/search?q=${searchInput.value}`);
+  })
+}
+
+
+
+
+async function loadProductPage() {
+  const productDetailtContainer = document.querySelector("#product-detail-container");
+  if (!productDetailtContainer) {
+    return;
   }
 
-})
-}
+  console.log(productDetailtContainer);
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const url = `https://dummyjson.com/products/${id}`;
+  // console.log(id);
 
-
-
-
-
-
-
-if(searchInput){
-searchInput.addEventListener('input', (e) => {
-  e.stopPropagation();
-
-  fetchProducts(`https://dummyjson.com/products/search?q=${searchInput.value}`);
-})
-}
-
-
-
-
-async function loadProductPage(){
-const productDetailtContainer=document.querySelector("#product-detail-container");
-if(!productDetailtContainer){
-  return;
-}
-
-console.log(productDetailtContainer);
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-const url=`https://dummyjson.com/products/${id}`;
-// console.log(id);
-
-productDetailtContainer.innerHTML=`<div class="col-span-full flex justify-center items-center py-16">
+  productDetailtContainer.innerHTML = `<div class="col-span-full flex justify-center items-center py-16">
   <p class="text-lg font-semibold text-teal-700 animate-pulse">
     Loading...
   </p>
 </div>`;
-const response=await fetch(url);
-const data=await response.json();
-console.log(data);
-const {thumbnail,category,price,rating,reviews,title,description}=data;
+  const response = await fetch(url);
+  const data = await response.json();
+  if (data.message) {
+    productDetailtContainer.innerHTML = `<div class="col-span-full flex justify-center items-center py-16">
+  <p class="text-lg font-semibold text-teal-700 animate-pulse">
+    Failed to load product details...
+  </p>
+</div>`;
+    return;
+  }
+  console.log(data);
+  const { thumbnail, category, price, rating, reviews, title, description } = data;
 
-const div=`<div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+  const div = `<div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
         
         <div class="bg-white border border-slate-200 rounded-lg p-8 flex items-center justify-center min-h-[350px] md:min-h-[440px]">
           <img 
@@ -299,8 +323,229 @@ const div=`<div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
         </div>
       </div>`;
 
-productDetailtContainer.innerHTML=div;
+  productDetailtContainer.innerHTML = div;
+  const addToWishlistBtn = document.querySelector("#add-to-wishlist-btn");
+  const addToCartBtn = document.querySelector("#add-to-cart-btn");
+  addToWishlistBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (getItem("wishlist").length) {
+      const isExist = getItem("wishlist").some(p => p.id === data.id);
+
+      if (!isExist) {
+        setItem("wishlist", [data, ...getItem("wishlist")]);
+      }
+
+    } else {
+      setItem("wishlist", [data, ...getItem("wishlist")]);
+    }
+
+
+    updateWishlistCount();
+
+    console.log(wishlistProducts);
+  })
+
+  addToCartBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (getItem("cart").length) {
+      const isExist = getItem("cart").some(p => p.id === data.id);
+
+      if (!isExist) {
+        setItem("cart", [data, ...getItem("cart")]);
+      }
+
+    } else {
+      setItem("cart", [data, ...getItem("cart")]);
+    }
+
+
+    updateWishlistCount();
+    updateCartCount();
+
+
+  })
+
+
 
 }
 
 loadProductPage();
+
+
+function updateCartCount() {
+  cartCount.textContent = getItem("cart").length;
+
+}
+
+updateCartCount();
+
+function updateWishlistCount() {
+  wishlistCount.textContent = getItem("wishlist").length;
+}
+
+
+updateWishlistCount();
+
+
+function loadWishlistPage() {
+  const wishListContainer = document.querySelector("#wishlist-container");
+  if (!wishListContainer) {
+    return;
+  }
+  const wishlistProducts = getItem("wishlist");
+  const outterDiv = document.createElement("div");
+
+
+  if (wishlistProducts.length) {
+    wishListContainer.innerHTML = "";
+    outterDiv.className = "bg-white border border-slate-200 rounded-lg divide-y divide-slate-200 overflow-hidden shadow-sm";
+    wishlistProducts.forEach(({ title, thumbnail, price, id }) => {
+      const card = document.createElement("div");
+      card.className = "p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-between";
+      card.innerHTML = `
+          <div class="flex items-center gap-4 w-full sm:w-auto flex-1 min-w-0">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white border border-slate-200 rounded p-1.5 flex items-center justify-center shrink-0">
+              <img 
+                src=${thumbnail}
+                alt=${title} 
+                class="max-h-full max-w-full object-contain"
+              >
+            </div>
+            <div class="min-w-0 flex-1">
+              <a 
+                href="product-details.html?id=${id}" 
+                class="text-sm font-semibold text-slate-900 hover:text-teal-700 line-clamp-2 transition" 
+                title=${title}
+              >
+                ${title}
+              </a>
+              <p class="text-sm font-bold text-slate-900 mt-1">₹${convertToINR(price)}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto shrink-0 justify-end">
+            <button 
+              type="button"
+              data-id=${id} 
+              class="wishlist-add-cart-btn inline-flex items-center justify-center gap-1.5 bg-teal-700 hover:bg-teal-800 text-white text-sm font-medium py-2 px-4 rounded transition shadow-sm"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+              </svg>
+              <span>Add to Cart</span>
+            </button>
+            <button 
+              type="button"
+              data-id=${id} 
+              class="wishlist-remove-btn inline-flex items-center justify-center gap-1.5 text-slate-500 hover:text-red-600 border border-slate-300 hover:border-red-300 text-sm font-medium py-2 px-3 rounded transition"
+              title="Remove from Wishlist"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              <span>Remove from Wishlist</span>
+            </button>
+          </div>
+      `
+
+        ;
+
+      outterDiv.append(card);
+
+    })
+
+
+    wishListContainer.append(outterDiv);
+  } else {
+    wishListContainer.innerHTML = `<div class="bg-white border border-slate-200 rounded-lg p-12 text-center max-w-md mx-auto my-8">
+        <div class="w-16 h-16 mx-auto mb-4 text-slate-300 flex items-center justify-center">
+          <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-800 mb-2">Your wishlist is empty</h2>
+        <p class="text-slate-500 text-sm mb-6">Looks like you haven't saved any products to your wishlist yet.</p>
+        <a href="index.html" class="inline-flex items-center justify-center bg-teal-700 hover:bg-teal-800 text-white font-medium px-6 py-2.5 rounded-md transition text-sm">
+          Start Shopping
+        </a>
+      </div>`;
+  }
+
+
+
+  wishListContainer.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    const wishlistAddCartBtn = e.target.closest(".wishlist-add-cart-btn");
+    if (wishlistAddCartBtn) {
+      const ProductId = Number(wishlistAddCartBtn.dataset.id);
+      const findProduct = getItem("wishlist").find(({ id }) => id === ProductId);
+      cartAdding(findProduct);
+    }
+
+
+
+
+
+
+    const removewishlistBtn = e.target.closest(".wishlist-remove-btn");
+    if (removewishlistBtn) {
+
+      const removeProductId = Number(removewishlistBtn.dataset.id);
+      const filterProducts = getItem("wishlist").filter(({ id }) => id !== removeProductId);
+      setItem("wishlist", filterProducts);
+      updateWishlistCount();
+      loadWishlistPage();
+    }
+  })
+
+}
+
+
+loadWishlistPage();
+
+
+
+function loadCartPage() {
+  const cartContainer = document.querySelector("#cart-container");
+  if (!cartContainer) {
+    return;
+  }
+
+  const cartProducts = getItem("cart");
+  if (cartProducts.length) {
+
+
+  } else {
+
+    cartContainer.innerHTML = ` <div class="bg-white border border-slate-200 rounded-lg p-12 text-center max-w-md mx-auto my-8">
+        <div class="w-16 h-16 mx-auto mb-4 text-slate-300 flex items-center justify-center">
+          <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-800 mb-2">Your cart is empty</h2>
+        <p class="text-slate-500 text-sm mb-6">Looks like you haven't added anything to your cart yet.</p>
+        <a href="index.html" class="inline-flex items-center justify-center bg-teal-700 hover:bg-teal-800 text-white font-medium px-6 py-2.5 rounded-md transition text-sm">
+          Start Shopping
+        </a>
+      </div>`;
+  }
+}
+
+
+loadCartPage();
+
+
+function cartAdding(data) {
+  if (getItem("cart").length) {
+    const isExist = getItem("cart").some(p => p.id === data.id);
+
+    if (!isExist) {
+      setItem("cart", [data, ...getItem("cart")]);
+    }
+
+  } else {
+    setItem("cart", [data, ...getItem("cart")]);
+  }
+  updateCartCount();
+}
