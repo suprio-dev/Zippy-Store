@@ -141,6 +141,88 @@ function renderCategories(currentSlug = "all") {
   })
 }
 
+function showToast(message, type = "success") {
+
+  const toastContainer = document.querySelector("#toast-container");
+
+  if (!toastContainer) return;
+
+  const config = {
+    success: {
+      icon: "✓",
+      title: "Success",
+      color: "text-emerald-600",
+      bg: "bg-emerald-50"
+    },
+    error: {
+      icon: "✕",
+      title: "Oops!",
+      color: "text-red-600",
+      bg: "bg-red-50"
+    },
+    info: {
+      icon: "i",
+      title: "Notice",
+      color: "text-blue-600",
+      bg: "bg-blue-50"
+    }
+  };
+
+  const { icon, title, color, bg } = config[type] || config.success;
+
+  const toast = document.createElement("div");
+
+  toast.className = `
+    relative overflow-hidden flex items-center gap-3
+    w-[340px] max-w-[calc(100vw-32px)]
+    p-4 bg-white rounded-xl
+    border border-gray-100
+    shadow-[0_10px_35px_rgba(0,0,0,0.12)]
+    toast-enter
+  `;
+
+  toast.innerHTML = `
+    <div class="w-10 h-10 shrink-0 rounded-full ${bg}
+      ${color} flex items-center justify-center
+      text-lg font-bold">
+      ${icon}
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <h4 class="text-sm font-semibold text-gray-900">
+        ${title}
+      </h4>
+
+      <p class="text-xs text-gray-500 mt-1">
+        ${message}
+      </p>
+    </div>
+
+    <button class="toast-close text-gray-400 hover:text-gray-800
+      transition text-xl leading-none" aria-label="Close">
+      &times;
+    </button>
+
+    <div class="toast-progress absolute bottom-0 left-0
+      h-[3px] ${type === "error" ? "bg-red-500" : "bg-emerald-500"}">
+    </div>
+  `;
+
+  toastContainer.append(toast);
+
+  const removeToast = () => {
+    if (!toast.isConnected) return;
+    toast.classList.replace("toast-enter", "toast-exit");
+    setTimeout(() => toast.remove(), 250);
+  };
+
+  const timeout = setTimeout(removeToast, 3000);
+
+  toast.querySelector(".toast-close").addEventListener("click", () => {
+    clearTimeout(timeout);
+    removeToast();
+  });
+}
 
 
 function formatCategory(category) {
@@ -167,7 +249,7 @@ if (categoryFilters) {
 
 
 function toINR(price) {
-  return Math.round(price * 60);         
+  return Math.round(price * 60);
 }
 
 
@@ -239,21 +321,9 @@ async function loadProductPage() {
               <svg class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
               </svg>
-              <svg class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              <svg class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              <svg class="w-5 h-5 text-slate-300 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              <svg class="w-5 h-5 text-slate-300 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
             </div>
             <span class="ml-2 text-sm text-slate-500 font-medium">
-              ${rating} (${reviews.length} reviews)
+              ${rating.toFixed(1)} (${reviews.length} reviews)
             </span>
           </div>
 
@@ -330,38 +400,31 @@ async function loadProductPage() {
   const addToCartBtn = document.querySelector("#add-to-cart-btn");
   addToWishlistBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    if (getItem("wishlist").length) {
-      const isExist = getItem("wishlist").some(p => p.id === data.id);
-
-      if (!isExist) {
-        setItem("wishlist", [data, ...getItem("wishlist")]);
-      }
-
-    } else {
-      setItem("wishlist", [data, ...getItem("wishlist")]);
-    }
+    addToWishlist(data);
 
 
-    updateWishlistCount();
-
-    console.log(wishlistProducts);
   })
 
   addToCartBtn.addEventListener('click', (e) => {
     e.preventDefault();
+
     if (getItem("cart").length) {
       const isExist = getItem("cart").some(p => p.id === data.id);
 
       if (!isExist) {
         setItem("cart", [data, ...getItem("cart")]);
+        showToast("Product added to cart!");
+      } else {
+        showToast("Product is already in your cart!", "error");
       }
 
     } else {
       setItem("cart", [data, ...getItem("cart")]);
+      showToast("Product added to cart!");
     }
 
 
-    updateWishlistCount();
+
     updateCartCount();
 
 
@@ -373,6 +436,25 @@ async function loadProductPage() {
 
 loadProductPage();
 
+function addToWishlist(data) {
+  if (getItem("wishlist").length) {
+    const isExist = getItem("wishlist").some(p => p.id === data.id);
+
+    if (!isExist) {
+      setItem("wishlist", [data, ...getItem("wishlist")]);
+      showToast("Product added to wishlist!");
+    } else {
+      showToast("Product is already in your wishlist!", "error");
+    }
+
+  } else {
+    setItem("wishlist", [data, ...getItem("wishlist")]);
+    showToast("Product added to wishlist!");
+  }
+
+
+  updateWishlistCount();
+}
 
 function updateCartCount() {
   cartCount.textContent = getItem("cart").length;
@@ -479,6 +561,7 @@ function loadWishlistPage() {
 
     const wishlistAddCartBtn = e.target.closest(".wishlist-add-cart-btn");
     if (wishlistAddCartBtn) {
+
       const ProductId = Number(wishlistAddCartBtn.dataset.id);
       const findProduct = getItem("wishlist").find(({ id }) => id === ProductId);
       cartAdding(findProduct);
@@ -495,6 +578,7 @@ function loadWishlistPage() {
       const removeProductId = Number(removewishlistBtn.dataset.id);
       const filterProducts = getItem("wishlist").filter(({ id }) => id !== removeProductId);
       setItem("wishlist", filterProducts);
+      showToast("Product removed from wishlist!");
       updateWishlistCount();
       loadWishlistPage();
     }
@@ -529,18 +613,18 @@ function loadCartPage() {
       </div>`;
     return;
   }
-let totalAmount=0;
- cartContainer.innerHTML="";
-const mainDiv=document.createElement("div");
-mainDiv.className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start";
-const div1=document.createElement("div");
-div1.className="lg:col-span-2 bg-white border border-slate-200 rounded-lg divide-y divide-slate-200 overflow-hidden shadow-sm";
-  cartData.forEach(item=>{
-  const { title, thumbnail, price, id } = item;
-  totalAmount+=toINR(Number(price));
-const itemDiv=document.createElement("div");
-itemDiv.className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-between";
-itemDiv.innerHTML=`<div class="flex items-center gap-4 w-full sm:w-auto flex-1 min-w-0">
+  let totalAmount = 0;
+  cartContainer.innerHTML = "";
+  const mainDiv = document.createElement("div");
+  mainDiv.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 items-start";
+  const div1 = document.createElement("div");
+  div1.className = "lg:col-span-2 bg-white border border-slate-200 rounded-lg divide-y divide-slate-200 overflow-hidden shadow-sm";
+  cartData.forEach(item => {
+    const { title, thumbnail, price, id } = item;
+    totalAmount += toINR(Number(price));
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-between";
+    itemDiv.innerHTML = `<div class="flex items-center gap-4 w-full sm:w-auto flex-1 min-w-0">
               <div
                 class="w-16 h-16 sm:w-20 sm:h-20 bg-white border border-slate-200 rounded p-1.5 flex items-center justify-center shrink-0">
                 <img src=${thumbnail}
@@ -578,7 +662,7 @@ itemDiv.innerHTML=`<div class="flex items-center gap-4 w-full sm:w-auto flex-1 m
               <div class="w-20 text-right">
                 <span class="text-sm font-bold text-slate-900">₹${convertToINR(price)}</span>
               </div>
-              <button type="button"
+              <button type="button" data-id=${id}
                 class="cart-wishlist-btn text-slate-400 hover:text-teal-700 p-1.5 rounded transition"
                 title="Add to Wishlist" aria-label="Add to Wishlist">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -588,7 +672,7 @@ itemDiv.innerHTML=`<div class="flex items-center gap-4 w-full sm:w-auto flex-1 m
                   </path>
                 </svg>
               </button>
-              <button type="button" class="cart-remove-btn text-slate-400 hover:text-red-600 p-1.5 rounded transition"
+              <button type="button" data-id=${id} class="cart-remove-btn text-slate-400 hover:text-red-600 p-1.5 rounded transition"
                 title="Remove from cart" aria-label="Remove item">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg">
@@ -598,12 +682,32 @@ itemDiv.innerHTML=`<div class="flex items-center gap-4 w-full sm:w-auto flex-1 m
                 </svg>
               </button>
             </div>`;
-            div1.append(itemDiv);
+    div1.append(itemDiv);
+    itemDiv.addEventListener('click', (e) => {
+      const cartRemoveBtn = e.target.closest(".cart-remove-btn");
+      if (cartRemoveBtn) {
+
+        const removeCartId = Number(cartRemoveBtn.dataset.id);
+        const filterProducts = getItem("cart").filter(({ id }) => id !== removeCartId);
+        setItem("cart", filterProducts);
+        showToast("Product removed from cart!");
+        updateCartCount();
+        loadCartPage();
+      }
+
+      const cartWishlistBtn = e.target.closest(".cart-wishlist-btn");
+      if (cartWishlistBtn) {
+        addToWishlist(item);
+      }
+
+
+
+    })
   })
 
-  const div2=document.createElement("div");
-  div2.className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm sticky top-24";
-div2.innerHTML=` <h2 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-200">
+  const div2 = document.createElement("div");
+  div2.className = "bg-white border border-slate-200 rounded-lg p-6 shadow-sm sticky top-24";
+  div2.innerHTML = ` <h2 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-200">
             Order Summary
           </h2>
 
@@ -617,8 +721,19 @@ div2.innerHTML=` <h2 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b 
             Proceed to Checkout
           </button>
         </div>`;
-        mainDiv.append(div1,div2);
-        cartContainer.append(mainDiv);
+  mainDiv.append(div1, div2);
+  cartContainer.append(mainDiv);
+
+  const checkoutBtn = document.querySelector("#checkout-btn");
+  checkoutBtn.addEventListener('click', (e) => {
+    showToast(`
+  <div class="flex flex-col gap-1">
+    <h3 class="font-semibold text-base">Checkout Coming Soon!</h3>
+    <p class="text-sm opacity-90">Your cart is ready! We're working on making checkout available soon. Stay tuned!</p>
+    <span class="text-xs opacity-70 mt-1">Zippy Store · Just now</span>
+  </div>
+`, "success");
+  })
 
 
 }
@@ -626,7 +741,7 @@ div2.innerHTML=` <h2 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b 
 
 loadCartPage();
 
-function convertTotalAmountINR(totalAmount){
+function convertTotalAmountINR(totalAmount) {
   return totalAmount.toLocaleString("en-IN");
 }
 
@@ -636,10 +751,14 @@ function cartAdding(data) {
 
     if (!isExist) {
       setItem("cart", [data, ...getItem("cart")]);
+      showToast("Product added to cart!");
+    } else {
+      showToast("Product is already in your cart!", "error");
     }
 
   } else {
     setItem("cart", [data, ...getItem("cart")]);
+    showToast("Product added to cart!");
   }
   updateCartCount();
 }

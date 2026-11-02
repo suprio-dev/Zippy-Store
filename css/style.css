@@ -4,3 +4,41 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+
+
+.toast-enter {
+  animation: toastEnter 0.35s ease forwards;
+}
+
+.toast-exit {
+  animation: toastExit 0.25s ease forwards;
+}
+
+.toast-progress {
+  width: 100%;
+  animation: toastProgress 3s linear forwards;
+}
+
+@keyframes toastEnter {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastExit {
+  to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
