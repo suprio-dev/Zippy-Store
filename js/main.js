@@ -166,7 +166,9 @@ if (categoryFilters) {
 
 
 
-
+function toINR(price) {
+  return Math.round(price * 60);         
+}
 
 
 
@@ -511,12 +513,8 @@ function loadCartPage() {
     return;
   }
 
-  const cartProducts = getItem("cart");
-  if (cartProducts.length) {
-
-
-  } else {
-
+  const cartData = getItem("cart");
+  if (!cartData.length) {
     cartContainer.innerHTML = ` <div class="bg-white border border-slate-200 rounded-lg p-12 text-center max-w-md mx-auto my-8">
         <div class="w-16 h-16 mx-auto mb-4 text-slate-300 flex items-center justify-center">
           <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -529,12 +527,108 @@ function loadCartPage() {
           Start Shopping
         </a>
       </div>`;
+    return;
   }
+let totalAmount=0;
+ cartContainer.innerHTML="";
+const mainDiv=document.createElement("div");
+mainDiv.className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start";
+const div1=document.createElement("div");
+div1.className="lg:col-span-2 bg-white border border-slate-200 rounded-lg divide-y divide-slate-200 overflow-hidden shadow-sm";
+  cartData.forEach(item=>{
+  const { title, thumbnail, price, id } = item;
+  totalAmount+=toINR(Number(price));
+const itemDiv=document.createElement("div");
+itemDiv.className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-between";
+itemDiv.innerHTML=`<div class="flex items-center gap-4 w-full sm:w-auto flex-1 min-w-0">
+              <div
+                class="w-16 h-16 sm:w-20 sm:h-20 bg-white border border-slate-200 rounded p-1.5 flex items-center justify-center shrink-0">
+                <img src=${thumbnail}
+                  alt=${thumbnail} class="max-h-full max-w-full object-contain">
+              </div>
+              <div class="min-w-0 flex-1">
+                <a href="product-details.html?id=${id}"
+                  class="text-sm font-semibold text-slate-900 hover:text-teal-700 line-clamp-2 transition"
+                  title=${title}>
+                  ${title}
+                </a>
+                <p class="text-xs text-slate-500 mt-1">₹${convertToINR(price)} each</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto shrink-0">
+              <div class="flex items-center border border-slate-300 rounded bg-white">
+                <button type="button"
+                  class="cart-qty-minus p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-l transition"
+                  aria-label="Decrease quantity">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                  </svg>
+                </button>
+                <span class="w-8 text-center text-xs font-semibold text-slate-800 select-none">1</span>
+                <button type="button"
+                  class="cart-qty-plus p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-r transition"
+                  aria-label="Increase quantity">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="w-20 text-right">
+                <span class="text-sm font-bold text-slate-900">₹${convertToINR(price)}</span>
+              </div>
+              <button type="button"
+                class="cart-wishlist-btn text-slate-400 hover:text-teal-700 p-1.5 rounded transition"
+                title="Add to Wishlist" aria-label="Add to Wishlist">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                  </path>
+                </svg>
+              </button>
+              <button type="button" class="cart-remove-btn text-slate-400 hover:text-red-600 p-1.5 rounded transition"
+                title="Remove from cart" aria-label="Remove item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                  </path>
+                </svg>
+              </button>
+            </div>`;
+            div1.append(itemDiv);
+  })
+
+  const div2=document.createElement("div");
+  div2.className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm sticky top-24";
+div2.innerHTML=` <h2 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-200">
+            Order Summary
+          </h2>
+
+          <div class="flex items-center justify-between text-base font-semibold text-slate-900 mb-6">
+            <span>Total Amount</span>
+            <span class="text-xl font-bold text-teal-700">₹${convertTotalAmountINR(totalAmount)}</span>
+          </div>
+
+          <button type="button" id="checkout-btn"
+            class="w-full bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 px-4 rounded-md shadow-sm transition text-center">
+            Proceed to Checkout
+          </button>
+        </div>`;
+        mainDiv.append(div1,div2);
+        cartContainer.append(mainDiv);
+
+
 }
 
 
 loadCartPage();
 
+function convertTotalAmountINR(totalAmount){
+  return totalAmount.toLocaleString("en-IN");
+}
 
 function cartAdding(data) {
   if (getItem("cart").length) {
