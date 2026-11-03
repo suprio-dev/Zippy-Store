@@ -396,6 +396,25 @@ async function loadProductPage() {
       </div>`;
 
   productDetailtContainer.innerHTML = div;
+
+  const qtyMinus = document.querySelector("#qty-minus");
+  const qtyPlus = document.querySelector("#qty-plus");
+  const qtyValue = document.querySelector("#qty-value");
+
+
+
+  qtyMinus.addEventListener('click', (e) => {
+    if (Number(qtyValue.textContent) > 1)
+      qtyValue.textContent = Number(qtyValue.textContent) - 1;
+  })
+  qtyPlus.addEventListener('click', (e) => {
+    if (Number(qtyValue.textContent) < 10)
+      qtyValue.textContent = Number(qtyValue.textContent) + 1;
+  })
+
+
+
+
   const addToWishlistBtn = document.querySelector("#add-to-wishlist-btn");
   const addToCartBtn = document.querySelector("#add-to-cart-btn");
   addToWishlistBtn.addEventListener('click', (e) => {
@@ -723,6 +742,22 @@ function loadCartPage() {
         </div>`;
   mainDiv.append(div1, div2);
   cartContainer.append(mainDiv);
+  document.querySelectorAll(".cart-qty-plus").forEach(cartQtyPlus => {
+ 
+    cartQtyPlus.addEventListener('click', (e) => {
+         const cartValue = e.target.closest("button").previousElementSibling;
+      if (Number(cartValue.textContent) < 10)
+        cartValue.textContent = Number(cartValue.textContent) + 1;
+    })
+  })
+  document.querySelectorAll(".cart-qty-minus").forEach(cartQtyMinus => {
+    
+    cartQtyMinus.addEventListener('click', (e) => {
+      const cartValue = e.target.closest("button").nextElementSibling;
+      if (Number(cartValue.textContent) > 1)
+        cartValue.textContent = Number(cartValue.textContent) - 1;
+    })
+  })
 
   const checkoutBtn = document.querySelector("#checkout-btn");
   checkoutBtn.addEventListener('click', (e) => {
