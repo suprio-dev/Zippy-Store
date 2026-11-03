@@ -1,3 +1,7 @@
+/* =========================================
+   TEXT UTILITIES
+========================================= */
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -8,39 +12,79 @@
 }
 
 
+/* =========================================
+   TOAST ANIMATIONS
+========================================= */
 
 .toast-enter {
-  animation: toastEnter 0.35s ease forwards;
+  animation: toastEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .toast-exit {
-  animation: toastExit 0.25s ease forwards;
+  animation: toastExit 0.25s ease-in forwards;
 }
 
 .toast-progress {
   width: 100%;
+  transform-origin: left;
   animation: toastProgress 3s linear forwards;
 }
+
+
+/* Toast Entry */
 
 @keyframes toastEnter {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(30px) scale(0.96);
   }
+
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
+
+
+/* Toast Exit */
 
 @keyframes toastExit {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
   to {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(30px) scale(0.96);
   }
 }
 
+
+/* Toast Progress */
+
 @keyframes toastProgress {
-  from { width: 100%; }
-  to { width: 0%; }
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .toast-enter,
+  .toast-exit,
+  .toast-progress {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+
 }
