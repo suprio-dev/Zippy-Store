@@ -4,6 +4,7 @@ const CATEGORY_API = "https://dummyjson.com/products/categories";
 const productsContainer = document.querySelector("#products-container");
 const categoryFilters = document.querySelector("#category-filters");
 const searchInput = document.querySelector("#search-input");
+const searchInputMobile = document.querySelector("#search-input-mobile");
 const wishlistCount = document.querySelector("#wishlist-count");
 const cartCount = document.querySelector("#cart-count");
 
@@ -321,6 +322,14 @@ if (searchInput) {
   })
 }
 
+
+if (searchInputMobile) {
+  searchInputMobile.addEventListener('input', (e) => {
+    e.stopPropagation();
+
+    fetchProducts(`https://dummyjson.com/products/search?q=${searchInputMobile.value}`);
+  })
+}
 
 
 
