@@ -22,6 +22,7 @@ Explore an interactive online shopping experience featuring everyday products, d
 - Responsive design for different screen sizes
 - Interactive toast notifications
 - Modern UI with Tailwind CSS
+- Adjustable product quantities in the shopping cart
 
 ---
 
