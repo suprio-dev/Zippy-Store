@@ -296,6 +296,7 @@ if (categoryFilters) {
     const element = e.target;
 
     if (element.type) {
+      searchInput.value = "";
       const slug = element.dataset.category;
       const url = element.dataset.url;
       console.log(slug, url);
@@ -317,7 +318,7 @@ function toINR(price) {
 if (searchInput) {
   searchInput.addEventListener('input', (e) => {
     e.stopPropagation();
-
+    renderCategories();
     fetchProducts(`https://dummyjson.com/products/search?q=${searchInput.value}`);
   })
 }
@@ -326,7 +327,7 @@ if (searchInput) {
 if (searchInputMobile) {
   searchInputMobile.addEventListener('input', (e) => {
     e.stopPropagation();
-
+    renderCategories();
     fetchProducts(`https://dummyjson.com/products/search?q=${searchInputMobile.value}`);
   })
 }
@@ -710,7 +711,7 @@ function loadCartPage() {
     const { title, thumbnail, price, id, quantity } = item;
     totalAmount += toINR(Number(price) * quantity);
     const itemDiv = document.createElement("div");
-   itemDiv.className = "cart-item p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-between";
+    itemDiv.className = "cart-item p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-between";
     itemDiv.innerHTML = `<div class="flex items-center gap-4 w-full sm:w-auto flex-1 min-w-0">
               <div
                 class="w-16 h-16 sm:w-20 sm:h-20 bg-white border border-slate-200 rounded p-1.5 flex items-center justify-center shrink-0">
@@ -842,94 +843,94 @@ function loadCartPage() {
 
   document.querySelectorAll(".cart-qty-plus").forEach(cartQtyPlus => {
 
-  cartQtyPlus.addEventListener("click", (e) => {
+    cartQtyPlus.addEventListener("click", (e) => {
 
-    const button = e.target.closest("button");
-    const itemDiv = button.closest(".cart-item");
-    const cartValue = button.previousElementSibling;
+      const button = e.target.closest("button");
+      const itemDiv = button.closest(".cart-item");
+      const cartValue = button.previousElementSibling;
 
-    const itemID = Number(button.dataset.id);
-    const newQuantity = Number(cartValue.textContent) + 1;
+      const itemID = Number(button.dataset.id);
+      const newQuantity = Number(cartValue.textContent) + 1;
 
-    if (newQuantity > 10) return;
+      if (newQuantity > 10) return;
 
-    const findItem = cartData.find(({ id }) => id === itemID);
+      const findItem = cartData.find(({ id }) => id === itemID);
 
-    if (!findItem) return;
+      if (!findItem) return;
 
-    findItem.quantity = newQuantity;
-    cartValue.textContent = newQuantity;
+      findItem.quantity = newQuantity;
+      cartValue.textContent = newQuantity;
 
-    itemDiv.querySelector(".item-price").textContent =
-      `₹${convertToINR(Number(findItem.price), newQuantity)}`;
+      itemDiv.querySelector(".item-price").textContent =
+        `₹${convertToINR(Number(findItem.price), newQuantity)}`;
 
-    setItem("cart", cartData);
+      setItem("cart", cartData);
 
-    let totalAmount = 0;
+      let totalAmount = 0;
 
-    cartData.forEach(({ price, quantity }) => {
-      totalAmount += toINR(Number(price) * Number(quantity));
+      cartData.forEach(({ price, quantity }) => {
+        totalAmount += toINR(Number(price) * Number(quantity));
+      });
+
+      document.querySelector("#total-amount").textContent =
+        `₹${convertTotalAmountINR(totalAmount)}`;
+
     });
 
-    document.querySelector("#total-amount").textContent =
-      `₹${convertTotalAmountINR(totalAmount)}`;
-
   });
-
-});
 
 
 
   document.querySelectorAll(".cart-qty-minus").forEach(cartQtyMinus => {
 
-  cartQtyMinus.addEventListener("click", (e) => {
+    cartQtyMinus.addEventListener("click", (e) => {
 
-    const button = e.target.closest("button");
-    const itemDiv = button.closest(".cart-item");
-    const cartValue = button.nextElementSibling;
+      const button = e.target.closest("button");
+      const itemDiv = button.closest(".cart-item");
+      const cartValue = button.nextElementSibling;
 
-    const itemID = Number(button.dataset.id);
-    const newQuantity = Number(cartValue.textContent) - 1;
+      const itemID = Number(button.dataset.id);
+      const newQuantity = Number(cartValue.textContent) - 1;
 
-    if (newQuantity < 1) return;
+      if (newQuantity < 1) return;
 
-    const findItem = cartData.find(({ id }) => id === itemID);
+      const findItem = cartData.find(({ id }) => id === itemID);
 
-    if (!findItem) return;
+      if (!findItem) return;
 
-    findItem.quantity = newQuantity;
-    cartValue.textContent = newQuantity;
+      findItem.quantity = newQuantity;
+      cartValue.textContent = newQuantity;
 
-    itemDiv.querySelector(".item-price").textContent =
-      `₹${convertToINR(Number(findItem.price), newQuantity)}`;
+      itemDiv.querySelector(".item-price").textContent =
+        `₹${convertToINR(Number(findItem.price), newQuantity)}`;
 
-    setItem("cart", cartData);
+      setItem("cart", cartData);
 
-    let totalAmount = 0;
+      let totalAmount = 0;
 
-    cartData.forEach(({ price, quantity }) => {
-      totalAmount += toINR(Number(price) * Number(quantity));
+      cartData.forEach(({ price, quantity }) => {
+        totalAmount += toINR(Number(price) * Number(quantity));
+      });
+
+      document.querySelector("#total-amount").textContent =
+        `₹${convertTotalAmountINR(totalAmount)}`;
+
     });
-
-    document.querySelector("#total-amount").textContent =
-      `₹${convertTotalAmountINR(totalAmount)}`;
 
   });
 
-});
-
   const checkoutBtn = document.querySelector("#checkout-btn");
   checkoutBtn.addEventListener('click', (e) => {
-showToast(`
+    showToast(`
   <div class="flex flex-col gap-1">
     <h3 class="font-semibold text-base">Order Placed Successfully!</h3>
     <p class="text-sm opacity-90">Thank you for shopping with Zippy Store. Your order has been confirmed!</p>
     <span class="text-xs opacity-70 mt-1">Zippy Store · Thank you!</span>
   </div>
 `, "success");
-setItem("cart",[]);
-updateCartCount();
-loadCartPage();
+    setItem("cart", []);
+    updateCartCount();
+    loadCartPage();
   })
 
 
