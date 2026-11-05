@@ -921,16 +921,76 @@ function loadCartPage() {
 
   const checkoutBtn = document.querySelector("#checkout-btn");
   checkoutBtn.addEventListener('click', (e) => {
-    showToast(`
+   const checkoutOverlay=document.querySelector("#checkout-overlay");
+   if(checkoutOverlay){
+    checkoutOverlay.classList.remove("hidden");
+    document.querySelector("#close-checkout").addEventListener('click',(e)=>{
+      checkoutOverlay.classList.add("hidden");
+    })
+
+
+// const finalTotal = totalAmount + deliveryFee;
+
+const checkoutSubtotal=document.querySelector("#checkout-subtotal");
+const checkoutTotal=document.querySelector("#checkout-total");
+const checkoutDelivery=document.querySelector("#checkout-delivery");
+
+
+let deliveryFee = 0;
+
+if (totalAmount < 199) {
+  
+  deliveryFee = 60;
+  checkoutDelivery.textContent=`₹${deliveryFee}`;
+    checkoutTotal.textContent=`₹${convertTotalAmountINR(Number(totalAmount)+deliveryFee)}`;
+  
+} else if (totalAmount < 500) {
+  deliveryFee = 45;
+  checkoutDelivery.textContent=`₹${deliveryFee}`;
+  checkoutTotal.textContent=`₹${convertTotalAmountINR(Number(totalAmount)+deliveryFee)}`;
+} else if (totalAmount < 1000) {
+  deliveryFee = 30;
+  checkoutDelivery.textContent=`₹${deliveryFee}`;
+  checkoutTotal.textContent=`₹${convertTotalAmountINR(Number(totalAmount)+deliveryFee)}`;
+} else if (totalAmount < 2000) {
+  deliveryFee = 20;
+  checkoutDelivery.textContent=`₹${deliveryFee}`;
+ checkoutTotal.textContent=`₹${convertTotalAmountINR(Number(totalAmount)+deliveryFee)}`;
+} else if (totalAmount < 3000) {
+  deliveryFee = 10;
+  checkoutDelivery.textContent=`₹${deliveryFee}`;
+  checkoutTotal.textContent=`₹${convertTotalAmountINR(Number(totalAmount)+deliveryFee)}`;
+} else {
+  deliveryFee = 0;
+  checkoutDelivery.textContent="FREE";
+checkoutTotal.textContent=`₹${convertTotalAmountINR(Number(totalAmount)+deliveryFee)}`;
+}
+
+checkoutSubtotal.textContent=`₹${convertTotalAmountINR(totalAmount)}`;
+document.querySelector("#place-order-btn").addEventListener('click',(e)=>{
+  e.preventDefault();
+ 
+    setTimeout(() => {
+      checkoutOverlay.classList.add("hidden");
+    }, 3000);
+  
+showToast(`
   <div class="flex flex-col gap-1">
-    <h3 class="font-semibold text-base">Order Placed Successfully!</h3>
-    <p class="text-sm opacity-90">Thank you for shopping with Zippy Store. Your order has been confirmed!</p>
-    <span class="text-xs opacity-70 mt-1">Zippy Store · Thank you!</span>
+    <h3 class="font-semibold text-base">Order Confirmed! 🎉</h3>
+    <p class="text-sm opacity-90">
+      Your order has been placed successfully. Thank you for choosing Zippy Store!
+    </p>
+    <span class="text-xs opacity-70 mt-1">
+      Happy shopping, see you again!
+    </span>
   </div>
 `, "success");
     setItem("cart", []);
     updateCartCount();
     loadCartPage();
+})
+   }
+    
   })
 
 

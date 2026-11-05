@@ -211,6 +211,290 @@
 </section>
 
 
+<!-- Checkout Overlay -->
+<div id="checkout-overlay"
+  class="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-6">
+
+  <div class="relative bg-white w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-3xl shadow-2xl">
+
+    <!-- Header -->
+    <div class="sticky top-0 z-20 bg-white border-b border-slate-100 px-5 sm:px-8 py-5 flex items-center justify-between">
+
+      <div>
+        <span class="text-xs uppercase tracking-widest font-bold text-teal-700">
+          ZIPPY CHECKOUT
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+          Complete Your Order<span class="text-orange-500">.</span>
+        </h2>
+      </div>
+
+      <button id="close-checkout"
+        class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"
+        aria-label="Close checkout">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_0.9fr] gap-8 p-5 sm:p-8">
+
+      <!-- Address Form -->
+      <div>
+
+        <div class="flex items-center gap-3 mb-7">
+
+          <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M12 21s8-4.5 8-11a8 8 0 10-16 0c0 6.5 8 11 8 11z"/>
+              <circle cx="12" cy="10" r="2.5"/>
+            </svg>
+          </div>
+
+          <div>
+            <h3 class="font-extrabold text-lg text-slate-900">Delivery Address</h3>
+            <p class="text-xs text-slate-500">Where should we deliver your order?</p>
+          </div>
+
+        </div>
+
+        <form id="checkout-form" class="space-y-5">
+
+          <!-- Personal Information -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <div>
+              <label for="customer-name" class="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
+              <input id="customer-name" name="name" type="text" required
+                placeholder="Enter your full name"
+                autocomplete="name"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+            </div>
+
+            <div>
+              <label for="customer-email" class="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+              <input id="customer-email" name="email" type="email" required
+                placeholder="you@example.com"
+                autocomplete="email"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label for="customer-phone" class="block text-sm font-semibold text-slate-700 mb-2">Phone Number</label>
+              <input id="customer-phone" name="phone" type="tel" required
+                pattern="[0-9]{10}" maxlength="10"
+                placeholder="10-digit mobile number"
+                autocomplete="tel"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+            </div>
+
+          </div>
+
+          <!-- Address -->
+          <div class="border-t border-slate-100 pt-5">
+
+            <h4 class="font-bold text-slate-900 mb-4">Address Details</h4>
+
+            <div class="space-y-4">
+
+              <div>
+                <label for="customer-house" class="block text-sm font-semibold text-slate-700 mb-2">House / Flat / Building</label>
+                <input id="customer-house" name="house" type="text" required
+                  placeholder="House no., flat or building name"
+                  autocomplete="address-line1"
+                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+              </div>
+
+              <div>
+                <label for="customer-street" class="block text-sm font-semibold text-slate-700 mb-2">Street / Area</label>
+                <input id="customer-street" name="street" type="text" required
+                  placeholder="Street, locality or area"
+                  autocomplete="address-line2"
+                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+              </div>
+
+              <div>
+                <label for="customer-landmark" class="block text-sm font-semibold text-slate-700 mb-2">Landmark <span class="text-slate-400 font-normal">(Optional)</span></label>
+                <input id="customer-landmark" name="landmark" type="text"
+                  placeholder="Nearby landmark"
+                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <div>
+                  <label for="customer-city" class="block text-sm font-semibold text-slate-700 mb-2">City</label>
+                  <input id="customer-city" name="city" type="text" required
+                    placeholder="City"
+                    autocomplete="address-level2"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+                </div>
+
+                <div>
+                  <label for="customer-state" class="block text-sm font-semibold text-slate-700 mb-2">State</label>
+                  <input id="customer-state" name="state" type="text" required
+                    placeholder="State"
+                    autocomplete="address-level1"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label for="customer-pincode" class="block text-sm font-semibold text-slate-700 mb-2">PIN Code</label>
+                  <input id="customer-pincode" name="pincode" type="text" required
+                    pattern="[0-9]{6}" maxlength="6"
+                    placeholder="6-digit PIN code"
+                    autocomplete="postal-code"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition">
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Delivery Preferences -->
+          <div class="border-t border-slate-100 pt-5">
+
+            <h4 class="font-bold text-slate-900 mb-4">Delivery Preferences</h4>
+
+            <div class="grid grid-cols-2 gap-3">
+
+              <label class="cursor-pointer">
+                <input type="radio" name="address-type" value="Home" checked class="peer sr-only">
+                <div class="border border-slate-200 rounded-xl p-4 peer-checked:border-teal-600 peer-checked:bg-teal-50 transition">
+                  <span class="text-xl">🏠</span>
+                  <p class="font-bold text-sm mt-2 text-slate-800">Home</p>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="address-type" value="Work" class="peer sr-only">
+                <div class="border border-slate-200 rounded-xl p-4 peer-checked:border-teal-600 peer-checked:bg-teal-50 transition">
+                  <span class="text-xl">🏢</span>
+                  <p class="font-bold text-sm mt-2 text-slate-800">Work</p>
+                </div>
+              </label>
+
+            </div>
+
+            <div class="mt-4">
+              <label for="delivery-instructions" class="block text-sm font-semibold text-slate-700 mb-2">
+                Delivery Instructions <span class="text-slate-400 font-normal">(Optional)</span>
+              </label>
+              <textarea id="delivery-instructions" name="instructions" rows="3"
+                placeholder="Any special instructions for delivery?"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition resize-none"></textarea>
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- Order Summary -->
+      <aside class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 h-fit">
+
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-teal-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+            </svg>
+          </div>
+
+          <h3 class="font-extrabold text-lg text-slate-900">Order Summary</h3>
+        </div>
+
+        <div class="space-y-4 text-sm">
+
+          <div class="flex justify-between text-slate-500">
+            <span>Subtotal</span>
+            <span id="checkout-subtotal" class="font-semibold text-slate-800">₹0</span>
+          </div>
+
+          <div class="flex justify-between text-slate-500">
+            <span>Delivery Fee</span>
+            <span id="checkout-delivery" class="font-semibold text-teal-700">FREE</span>
+          </div>
+
+          <div class="border-t border-slate-200 pt-4 flex justify-between items-center">
+            <span class="font-bold text-slate-900">Total Amount</span>
+            <span id="checkout-total" class="text-xl font-extrabold text-teal-700">₹0</span>
+          </div>
+
+        </div>
+
+        <div class="mt-6 bg-white rounded-xl p-4 flex gap-3">
+          <span class="text-teal-600 text-lg">🔒</span>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Your personal information is safe and secure with Zippy.
+          </p>
+        </div>
+
+        <button type="submit" form="checkout-form" id="place-order-btn"
+          class="w-full mt-6 flex items-center justify-center gap-2 bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm py-4 px-4 rounded-xl transition shadow-lg shadow-teal-900/10">
+          Place Order
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <p class="text-center text-xs text-slate-400 mt-4">
+          Thank you for choosing Zippy.
+        </p>
+
+      </aside>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Order Confirmation Overlay -->
+<div id="order-success-overlay"
+  class="fixed inset-0 z-[110] bg-slate-950/70 backdrop-blur-md hidden items-center justify-center p-4">
+
+  <div class="bg-white rounded-3xl p-8 sm:p-12 max-w-md w-full text-center shadow-2xl">
+
+    <div class="w-20 h-20 mx-auto rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-6">
+      <svg class="w-11 h-11" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+          d="M5 12l5 5L20 7"/>
+      </svg>
+    </div>
+
+    <span class="text-xs font-bold uppercase tracking-widest text-teal-700">
+      ORDER CONFIRMED
+    </span>
+
+    <h2 class="text-3xl font-extrabold text-slate-900 mt-3">
+      You're all set<span class="text-orange-500">!</span>
+    </h2>
+
+    <p class="text-sm text-slate-500 leading-relaxed mt-4">
+      Your order has been successfully placed. Thank you for shopping with Zippy Store!
+    </p>
+
+    <div class="bg-slate-50 rounded-xl p-4 mt-6">
+      <p class="text-xs text-slate-400 font-medium">ORDER STATUS</p>
+      <p class="font-bold text-teal-700 mt-1">Confirmed · Preparing your order</p>
+    </div>
+
+    <button id="continue-shopping-btn"
+      class="w-full mt-7 bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-xl transition">
+      Continue Shopping
+    </button>
+
+  </div>
+
+</div>
+
   </main>
 
   <!-- Footer -->
