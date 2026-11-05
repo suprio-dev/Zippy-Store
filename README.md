@@ -23,6 +23,7 @@ Explore an interactive online shopping experience featuring everyday products, d
 - Interactive toast notifications
 - Modern UI with Tailwind CSS
 - Adjustable product quantities in the shopping cart
+- Checkout form with customer details and an order confirmation page displaying customer information.
 
 ---
 
