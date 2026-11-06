@@ -876,7 +876,7 @@ function loadCartPage() {
       document.querySelector("#total-amount").textContent =
         `₹${convertTotalAmountINR(totalAmount)}`;
       localStorage.setItem("totalAmount", String(totalAmount));
-      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")));
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay);
     });
 
   });
@@ -917,7 +917,7 @@ function loadCartPage() {
       document.querySelector("#total-amount").textContent =
         `₹${convertTotalAmountINR(totalAmount)}`;
       localStorage.setItem("totalAmount", String(totalAmount));
-      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")));
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay);
     });
 
   });
@@ -931,7 +931,7 @@ function loadCartPage() {
         checkoutOverlay.classList.add("hidden");
       })
 
-      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")));
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay);
 
 
     }
@@ -941,7 +941,7 @@ function loadCartPage() {
 }
 
 
-function updateCheckoutPrices(totalAmount) {
+function updateCheckoutPrices(totalAmount,checkoutOverlay) {
   const checkoutSubtotal = document.querySelector("#checkout-subtotal");
   const checkoutTotal = document.querySelector("#checkout-total");
   const checkoutDelivery = document.querySelector("#checkout-delivery");
@@ -978,7 +978,7 @@ function updateCheckoutPrices(totalAmount) {
   }
 
   checkoutSubtotal.textContent = `₹${convertTotalAmountINR(totalAmount)}`;
-  document.querySelector("#place-order-btn").addEventListener('submit', (e) => {
+  document.querySelector("#checkout-form").addEventListener('submit', (e) => {
     e.preventDefault();
     setTimeout(() => {
       checkoutOverlay.classList.add("hidden");
