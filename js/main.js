@@ -680,6 +680,7 @@ loadWishlistPage();
 
 
 function loadCartPage() {
+  let counter=0;
   const cartContainer = document.querySelector("#cart-container");
   if (!cartContainer) {
     return;
@@ -876,7 +877,7 @@ function loadCartPage() {
       document.querySelector("#total-amount").textContent =
         `₹${convertTotalAmountINR(totalAmount)}`;
       localStorage.setItem("totalAmount", String(totalAmount));
-      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay);
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay,counter);
     });
 
   });
@@ -917,7 +918,7 @@ function loadCartPage() {
       document.querySelector("#total-amount").textContent =
         `₹${convertTotalAmountINR(totalAmount)}`;
       localStorage.setItem("totalAmount", String(totalAmount));
-      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay);
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay,counter);
     });
 
   });
@@ -931,7 +932,8 @@ function loadCartPage() {
         checkoutOverlay.classList.add("hidden");
       })
 
-      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay);
+
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")),checkoutOverlay,counter);
 
 
     }
@@ -941,7 +943,7 @@ function loadCartPage() {
 }
 
 
-function updateCheckoutPrices(totalAmount,checkoutOverlay) {
+function updateCheckoutPrices(totalAmount,checkoutOverlay,counter) {
   const checkoutSubtotal = document.querySelector("#checkout-subtotal");
   const checkoutTotal = document.querySelector("#checkout-total");
   const checkoutDelivery = document.querySelector("#checkout-delivery");
@@ -980,7 +982,9 @@ function updateCheckoutPrices(totalAmount,checkoutOverlay) {
   checkoutSubtotal.textContent = `₹${convertTotalAmountINR(totalAmount)}`;
   document.querySelector("#checkout-form").addEventListener('submit', (e) => {
     e.preventDefault();
-    setTimeout(() => {
+    counter++;
+if(counter===1){
+  setTimeout(() => {
       checkoutOverlay.classList.add("hidden");
     }, 3000);
 
@@ -998,6 +1002,8 @@ function updateCheckoutPrices(totalAmount,checkoutOverlay) {
     setItem("cart", []);
     updateCartCount();
     loadCartPage();
+}
+    
   })
 }
 
