@@ -837,6 +837,7 @@ function loadCartPage() {
   </p>
 `;
 
+  localStorage.setItem("totalAmount", String(totalAmount));
 
   mainDiv.append(div1, div2);
   cartContainer.append(mainDiv);
@@ -874,7 +875,8 @@ function loadCartPage() {
 
       document.querySelector("#total-amount").textContent =
         `₹${convertTotalAmountINR(totalAmount)}`;
-
+      localStorage.setItem("totalAmount", String(totalAmount));
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")));
     });
 
   });
@@ -914,7 +916,8 @@ function loadCartPage() {
 
       document.querySelector("#total-amount").textContent =
         `₹${convertTotalAmountINR(totalAmount)}`;
-
+      localStorage.setItem("totalAmount", String(totalAmount));
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")));
     });
 
   });
@@ -928,50 +931,60 @@ function loadCartPage() {
         checkoutOverlay.classList.add("hidden");
       })
 
-
-      const checkoutSubtotal = document.querySelector("#checkout-subtotal");
-      const checkoutTotal = document.querySelector("#checkout-total");
-      const checkoutDelivery = document.querySelector("#checkout-delivery");
+      updateCheckoutPrices(Number(localStorage.getItem("totalAmount")));
 
 
-      let deliveryFee = 0;
+    }
 
-      if (totalAmount < 199) {
+  })
 
-        deliveryFee = 60;
-        checkoutDelivery.textContent = `₹${deliveryFee}`;
-        checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+}
 
-      } else if (totalAmount < 500) {
-        deliveryFee = 45;
-        checkoutDelivery.textContent = `₹${deliveryFee}`;
-        checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
-      } else if (totalAmount < 1000) {
-        deliveryFee = 30;
-        checkoutDelivery.textContent = `₹${deliveryFee}`;
-        checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
-      } else if (totalAmount < 2000) {
-        deliveryFee = 20;
-        checkoutDelivery.textContent = `₹${deliveryFee}`;
-        checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
-      } else if (totalAmount < 3000) {
-        deliveryFee = 10;
-        checkoutDelivery.textContent = `₹${deliveryFee}`;
-        checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
-      } else {
-        deliveryFee = 0;
-        checkoutDelivery.textContent = "FREE";
-        checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
-      }
 
-      checkoutSubtotal.textContent = `₹${convertTotalAmountINR(totalAmount)}`;
-      document.querySelector("#place-order-btn").addEventListener('submit', (e) => {
-        e.preventDefault();
-        setTimeout(() => {
-          checkoutOverlay.classList.add("hidden");
-        }, 3000);
+function updateCheckoutPrices(totalAmount) {
+  const checkoutSubtotal = document.querySelector("#checkout-subtotal");
+  const checkoutTotal = document.querySelector("#checkout-total");
+  const checkoutDelivery = document.querySelector("#checkout-delivery");
 
-        showToast(`
+
+  let deliveryFee = 0;
+
+  if (totalAmount < 199) {
+
+    deliveryFee = 60;
+    checkoutDelivery.textContent = `₹${deliveryFee}`;
+    checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+
+  } else if (totalAmount < 500) {
+    deliveryFee = 45;
+    checkoutDelivery.textContent = `₹${deliveryFee}`;
+    checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+  } else if (totalAmount < 1000) {
+    deliveryFee = 30;
+    checkoutDelivery.textContent = `₹${deliveryFee}`;
+    checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+  } else if (totalAmount < 2000) {
+    deliveryFee = 20;
+    checkoutDelivery.textContent = `₹${deliveryFee}`;
+    checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+  } else if (totalAmount < 3000) {
+    deliveryFee = 10;
+    checkoutDelivery.textContent = `₹${deliveryFee}`;
+    checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+  } else {
+    deliveryFee = 0;
+    checkoutDelivery.textContent = "FREE";
+    checkoutTotal.textContent = `₹${convertTotalAmountINR(Number(totalAmount) + deliveryFee)}`;
+  }
+
+  checkoutSubtotal.textContent = `₹${convertTotalAmountINR(totalAmount)}`;
+  document.querySelector("#place-order-btn").addEventListener('submit', (e) => {
+    e.preventDefault();
+    setTimeout(() => {
+      checkoutOverlay.classList.add("hidden");
+    }, 3000);
+
+    showToast(`
   <div class="flex flex-col gap-1">
     <h3 class="font-semibold text-base">Order Confirmed! 🎉</h3>
     <p class="text-sm opacity-90">
@@ -982,16 +995,13 @@ function loadCartPage() {
     </span>
   </div>
 `, "success");
-        setItem("cart", []);
-        updateCartCount();
-        loadCartPage();
-      })
-
-    }
-
+    setItem("cart", []);
+    updateCartCount();
+    loadCartPage();
   })
-
 }
+
+
 
 
 loadCartPage();
